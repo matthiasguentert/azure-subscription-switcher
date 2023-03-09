@@ -32,7 +32,9 @@ try {
     }
 
     $subscription = $subscriptions | Where-Object { $_.Index -eq $selection }
-    Set-AzContext -SubscriptionObject $subscription | Out-Null
+    $result = Set-AzContext -SubscriptionObject $subscription
+
+    Write-Host -ForegroundColor Yellow 'Switched to:', $result.Subscription.Name
 } catch {
     Write-Host -ForegroundColor Red "Luke, wrong input, the index you must use!"
 }
