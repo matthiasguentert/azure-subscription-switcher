@@ -1,3 +1,12 @@
+[CmdletBinding()]
+param (
+    [switch]
+    $powershell,
+
+    [switch]
+    $azcli
+)
+
 $subscriptions = @()
 Get-AzSubscription | Foreach-Object { $index = 1 } {
     $subscriptions += [PSCustomObject]@{
@@ -12,8 +21,18 @@ Get-AzSubscription | Foreach-Object { $index = 1 } {
 
 $subscriptions | Format-Table
 $context = Get-AzContext
-Write-Host -ForegroundColor Green "Currently active: $($context.Subscription.Name) ($($context.Subscription.Id))"
+Write-Host -ForegroundColor Green "Active: $($context.Subscription.Name) ($($context.Subscription.Id))"
 
-$selection = Read-Host "Switch"
+try {
+    [int]$selection = Read-Host "Index (0 to quit)"
 
-# ... WIP
+    if ($selection -eq 0) {
+        Write-Host -ForegroundColor Red 'Wont switch subscription!'
+        exit
+    }
+
+    $subscription = $subscriptions | Where-Object { $_.Index -eq $selection }
+    Set-AzContext -SubscriptionObject $subscription | Out-Null
+} catch {
+    Write-Host -ForegroundColor Red "Luke, wrong input, the index you must use!"
+}
