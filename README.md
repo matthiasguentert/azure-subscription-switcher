@@ -1,1 +1,1 @@
-# azure-subscription-switcher
+# Quickly switch between Azure subscriptions
